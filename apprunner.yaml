@@ -1,0 +1,30 @@
+version: 1.0
+runtime: python3
+build:
+  commands:
+    build:   
+      - pip install -r requirements.txt
+      - opentelemetry-bootstrap --action=install
+  env:
+    - name: PYTHON_ENV
+      value: "production"
+    - name: MY_VAR_EXAMPLE
+      value: "example"
+run:
+  runtime-version: 3.8.16
+  command: opentelemetry-instrument gunicorn --bind 0.0.0.0:8000 --workers=1 --threads=2 application:app
+  network: 
+    port: 8000
+    env: MY_APP_PORT
+    
+  env:
+    - name: OTEL_PROPAGATORS
+      value: xray
+    - name: OTEL_METRICS_EXPORTER
+      value: none
+    - name: OTEL_PYTHON_ID_GENERATOR
+      value: xray  
+    - name: OTEL_PYTHON_DISABLED_INSTRUMENTATIONS 
+      value: urllib3
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: 'service.name=apprunner-python-xray'
