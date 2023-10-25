@@ -1,8 +1,8 @@
 version: 1.0
-runtime: python3
+runtime: python3 
 build:
   commands:
-    build:   
+    build:
       - pip install -r requirements.txt
       - opentelemetry-bootstrap --action=install
   env:
@@ -10,13 +10,10 @@ build:
       value: "production"
     - name: MY_VAR_EXAMPLE
       value: "example"
-run:
-  runtime-version: 3.8.16
-  command: opentelemetry-instrument gunicorn --bind 0.0.0.0:8000 --workers=1 --threads=2 application:app
+run: 
+  command: opentelemetry-instrument python app.py
   network: 
-    port: 8000
-    env: MY_APP_PORT
-    
+    port: 8080 
   env:
     - name: OTEL_PROPAGATORS
       value: xray
